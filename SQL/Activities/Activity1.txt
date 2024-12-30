@@ -1,0 +1,2 @@
+CREATE TABLE salesman (SALESMAN_ID int, SALESMAN_NAME varchar(32), SALESMAN_CITY varchar(32), COMMISSION int )
+DESCRIBE salesman;
