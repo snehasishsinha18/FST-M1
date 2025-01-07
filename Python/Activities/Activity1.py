@@ -1,0 +1,5 @@
+Name=input("Enter name")
+age=int(input("Enter age"))
+newage=int(100-age)
+year=int(newage+2024)
+print(year)
