@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="fst_testng" >
+    <test name="SuiteTests" >
+        <classes>
+            <class name="fst_testng.Activity1"/>
+            <class name="fst_testng.Activity3"/>
+        </classes>
+    </test>
+</suite>

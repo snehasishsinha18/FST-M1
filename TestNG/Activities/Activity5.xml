@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="fst_testng" thread-count="4" parallel="classes" >
+		    <groups>
+            	<run>
+            		<include name ="header"/>
+            	</run> 
+            </groups>
+    <test name="SuiteTests" >
+        <classes>
+            <class name="fst_testng.Activity5"/>  
+        </classes>
+    </test>
+</suite>
