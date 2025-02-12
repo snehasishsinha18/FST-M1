@@ -1,59 +1,50 @@
-package appium_test;
-
-import io.appium.java_client.AppiumBy;
+import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.options.UiAutomator2Options;
+import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
-public class Activity1 {
-    // Driver Declaration
-    AndroidDriver driver;
+public class GoogleTasksTest {
+    private AndroidDriver<MobileElement> driver;
 
-    // Set up method
     @BeforeClass
-    public void setUp() throws MalformedURLException, URISyntaxException {
-        // Desired Capabilities
-        UiAutomator2Options options = new UiAutomator2Options();
-        options.setPlatformName("android");
-        options.setAutomationName("UiAutomator2");
-        options.setAppPackage("com.android.calculator2");
-        options.setAppActivity(".Calculator");
-        options.noReset();
+    public void setup() throws MalformedURLException {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
+        caps.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+        caps.setCapability("appPackage", "com.google.android.apps.tasks");
+        caps.setCapability("appActivity", "com.google.android.apps.tasks.ui.TaskListsActivity");
+        caps.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
 
-        // Server Address
-        URL serverURL = new URI("http://localhost:4723").toURL();
-
-        // Driver Initialization
-        driver = new AndroidDriver(serverURL, options);
+        driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), caps);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
-    // Test method
     @Test
-    public void multiplyTest() {
-        // Perform the calculation
-        driver.findElement(AppiumBy.id("digit_5")).click();
-        driver.findElement(AppiumBy.accessibilityId("multiply")).click();
-        driver.findElement(AppiumBy.id("digit_8")).click();
-        driver.findElement(AppiumBy.accessibilityId("equals")).click();
+    public void createGoogleTasks() {
+        String[] tasks = {"Complete Activity with Google Tasks", "Complete Activity with Google Keep", "Complete the second Activity Google Keep"};
 
-        // Find the result
-        String result = driver.findElement(AppiumBy.id("result")).getText();
+        for (String task : tasks) {
+            driver.findElementByAccessibilityId("Create new task").click();
+            driver.findElementById("add_task_title").sendKeys(task);
+            driver.findElementById("add_task_done").click();
+        }
 
-        // Assertion
-        Assert.assertEquals(result, "40");
+        // Assertion to verify tasks added
+        int taskCount = driver.findElementsById("task_name").size();
+        Assert.assertEquals(taskCount, 3);
     }
 
-
-    // Tear down method
     @AfterClass
     public void tearDown() {
-        // Close the app
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
-
