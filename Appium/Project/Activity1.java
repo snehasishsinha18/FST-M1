@@ -10,7 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-public class GoogleTasksTest {
+public class Activity1 {
     private AndroidDriver<MobileElement> driver;
 
     @BeforeClass
