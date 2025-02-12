@@ -1,98 +1,82 @@
 package appium_test;
+
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.By;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
 public class Activity3 {
-    // Driver Declaration
-    AndroidDriver driver;
+    private AndroidDriver<MobileElement> driver;
 
-    // Set up method
     @BeforeClass
-    public void setUp() throws MalformedURLException, URISyntaxException {
-        // Desired Capabilities
-        UiAutomator2Options options = new UiAutomator2Options();
-        options.setPlatformName("android");
-        options.setAutomationName("UiAutomator2");
-        options.setAppPackage("com.android.calculator2");
-        options.setAppActivity(".Calculator");
-        options.noReset();
+    public void setup() throws MalformedURLException {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
+        caps.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+        caps.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
+        caps.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
 
-        // Server Address
-        URL serverURL = new URI("http://localhost:4723").toURL();
-
-        // Driver Initialization
-        driver = new AndroidDriver(serverURL, options);
+        driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), caps);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
-    // Test method
     @Test
-    public void additionTest() {
-        // Perform the calculation
-        driver.findElement(AppiumBy.id("digit_5")).click();
-        driver.findElement(AppiumBy.accessibilityId("plus")).click();
-        driver.findElement(AppiumBy.id("digit_9")).click();
-        driver.findElement(AppiumBy.accessibilityId("equals")).click();
+    public void testTodoList() {
+        driver.get("https://v1.training-support.net/selenium");
+        driver.findElement(By.xpath("//android.view.View[contains(@text, 'To-Do List')]")).click();
 
-        // Find the result
-        String result = driver.findElement(AppiumBy.id("result")).getText();
+        String[] tasks = {"Add tasks to list", "Get number of tasks", "Clear the list"};
+        for (String task : tasks) {
+            driver.findElement(By.id("taskInput")) .sendKeys(task);
+            driver.findElement(By.xpath("//button[contains(text(),'Add Task')]")).click();
+        }
 
-        // Assertion
-        Assert.assertEquals(result, "14");
+        int taskCount = driver.findElements(By.className("task")) .size();
+        Assert.assertEquals(taskCount, 3);
+
+        driver.findElements(By.className("task")) .forEach(MobileElement::click);
+        driver.findElement(By.xpath("//button[contains(text(),'Clear List')]")).click();
+        Assert.assertEquals(driver.findElements(By.className("task")) .size(), 0);
     }
 
-    // Test method
     @Test
-    public void subtractTest() {
-        // Perform the calculation
-        driver.findElement(AppiumBy.id("digit_1")).click();
-        driver.findElement(AppiumBy.id("digit_0")).click();
-        driver.findElement(AppiumBy.accessibilityId("minus")).click();
-        driver.findElement(AppiumBy.id("digit_5")).click();
-        driver.findElement(AppiumBy.accessibilityId("equals")).click();
+    public void testLoginCorrect() {
+        driver.get("https://v1.training-support.net/selenium");
+        driver.findElement(By.xpath("//android.view.View[contains(@text, 'Login Form')]")).click();
 
-        // Find the result
-        String result = driver.findElement(AppiumBy.id("result")).getText();
+        driver.findElement(By.id("username")).sendKeys("admin");
+        driver.findElement(By.id("password")).sendKeys("password");
+        driver.findElement(By.xpath("//button[contains(text(),'Log in')]")).click();
 
-        // Assertion
-        Assert.assertEquals(result, "5");
+        String successMessage = driver.findElement(By.id("message")) .getText();
+        Assert.assertEquals(successMessage, "Welcome Back, admin");
     }
 
-    // Test method
     @Test
-    public void multiplyTest() {
-        // Perform the calculation
-        driver.findElement(AppiumBy.id("digit_5")).click();
-        driver.findElement(AppiumBy.accessibilityId("multiply")).click();
-        driver.findElement(AppiumBy.id("digit_1")).click();
-        driver.findElement(AppiumBy.id("digit_0")).click();
-        driver.findElement(AppiumBy.id("digit_0")).click();
-        driver.findElement(AppiumBy.accessibilityId("equals")).click();
+    public void testLoginIncorrect() {
+        driver.get("https://v1.training-support.net/selenium");
+        driver.findElement(By.xpath("//android.view.View[contains(@text, 'Login Form')]")).click();
 
-        // Find the result
-        String result = driver.findElement(AppiumBy.id("result")).getText();
+        driver.findElement(By.id("username")).sendKeys("user");
+        driver.findElement(By.id("password")).sendKeys("wrongpass");
+        driver.findElement(By.xpath("//button[contains(text(),'Log in')]")).click();
 
-        // Assertion
-        Assert.assertEquals(result, "500");
+        String errorMessage = driver.findElement(By.id("message")) .getText();
+        Assert.assertEquals(errorMessage, "Invalid Credentials");
     }
 
-    // Test method
-    @Test
-    public void divideTest() {
-        // Perform the calculation
-        driver.findElement(AppiumBy.id("digit_5")).click();
-        driver.findElement(AppiumBy.id("digit_0")).click();
-        driver.findElement(AppiumBy.accessibilityId("divide")).click();
-        driver.findElement(AppiumBy.id("digit_2")).click();
-        driver.findElement(AppiumBy.accessibilityId("equals")).click();
-
-        // Find the result
-        String result = driver.findElement(AppiumBy.id("result")).getText();
-
-        // Assertion
-        Assert.assertEquals(result, "25");
-    }
-
-    // Tear down method
     @AfterClass
     public void tearDown() {
-        // Close the app
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
