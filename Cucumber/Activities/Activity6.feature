@@ -1,13 +1,11 @@
-@activity5
-Feature: Login Test
-  I want to use this template for my feature file
+@activity6
+Feature: Data driven test with DataTable
 
-
-  Scenario Outline: Testing Login without Examples
-    Given the user is on the login page
-    When the user enters "<Usernames>" and "<Passwords>"
-    And clicks the submit button
-    Then get the confirmation text and verify message as "<Message>"
-    Examples:
-   		|Usernames|Passwords|Message             |
-    	|admin    |password |Welcome Back, Admin! |
+@TasksDataTable
+Scenario: Testing the To-Do app
+  Given User completes the requirement
+  When User enters the following tasks
+    | task1 |
+    | task2 |
+    | task3 |
+  Then Verify results
