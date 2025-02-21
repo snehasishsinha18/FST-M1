@@ -1,9 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<suite name="fst_testng" thread-count="4" parallel="classes" >
-    <test name="SuiteTests" >
-        <classes>
-            <class name="fst_testng.Activity1"/>
-            <class name="fst_testng.Activity3"/>
-        </classes>
-    </test>
+<suite name="FSTTests" thread-count="4" parallel="classes">
+<test name="FSTActivities">
+<parameter name="username" value="admin"/>
+<parameter name="password" value="password"/>
+<classes>
+<class name="activities.Activity1"/>
+<class name="activities.Activity2"/>
+<class name="activities.Activity3"/>
+<class name="suiteExample.Activity4_DemoOne"/>
+<class name="suiteExample.Activity4_DemoOne"/>
+<class name="activities.Activity5"/>
+<class name="activities.Activity6"/>
+<class name="activities.Activity7"/>
+</classes>
+</test>
 </suite>
